@@ -21,8 +21,9 @@ std::array<T, 19> lb_calc_n_from_m(const std::array<T, 19> &modes) {
   const auto normalized_modes = normalize_modes(modes);
 
   for (int i = 0; i < 19; i++) {
-    ret[i] = Utils::inner_product(::D3Q19::e_ki_transposed[i], normalized_modes) *
-             ::D3Q19::w[i];
+    ret[i] =
+        Utils::inner_product(::D3Q19::e_ki_transposed[i], normalized_modes) *
+        ::D3Q19::w[i];
   }
   return ret;
 }
