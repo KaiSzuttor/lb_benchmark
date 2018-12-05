@@ -12,7 +12,7 @@ static void BM_LB_Modes_Calculation_New(benchmark::State &state) {
     std::array<double, 19> n;
     std::generate(n.begin(), n.end(), []() { return dist(mt); });
     state.ResumeTiming();
-    auto const modes = LB::lb_calc_m_from_n(n);
+    benchmark::DoNotOptimize(LB::lb_calc_m_from_n(n));
   }
 }
 
