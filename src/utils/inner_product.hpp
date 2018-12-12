@@ -6,8 +6,9 @@
 namespace Utils {
 
 template <int I, std::size_t N, typename T, int end> struct inner_product_impl {
-  double operator()(std::array<int, N> const &left_array,
-                    std::array<T, N> const &right_array) const {
+  __attribute__((always_inline)) double
+  operator()(std::array<int, N> const &left_array,
+             std::array<T, N> const &right_array) const {
     if (left_array[I] == 0) {
       return inner_product_impl<I + 1, N, T, end>{}(left_array, right_array);
     } else {
@@ -19,15 +20,16 @@ template <int I, std::size_t N, typename T, int end> struct inner_product_impl {
 
 template <int I, std::size_t N, typename T>
 struct inner_product_impl<I, N, T, I> {
-  double operator()(std::array<int, N> const &,
-                    std::array<T, N> const &) const {
+  __attribute__((always_inline)) double
+  operator()(std::array<int, N> const &, std::array<T, N> const &) const {
     return 0.0;
   }
 };
 
 template <typename T, std::size_t N>
-double inner_product(const std::array<int, N> &left_array,
-                     const std::array<T, N> &right_array) {
+__attribute__((always_inline)) double
+inner_product(const std::array<int, N> &left_array,
+              const std::array<T, N> &right_array) {
   if (N > 18) {
     auto const s1 =
         inner_product_impl<0, N, T, N / 4>{}(left_array, right_array);

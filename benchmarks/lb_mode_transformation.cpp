@@ -16,8 +16,9 @@ static void BM_LB_Modes_Calculation_New(benchmark::State &state) {
   }
 }
 
-void lb_calc_m_from_n_old(const std::array<double, 19> &populations,
-                          double *mode) {
+std::array<double, 19>
+lb_calc_m_from_n_old(const std::array<double, 19> &populations) {
+  std::array<double, 19> mode{};
   double n0, n1p, n1m, n2p, n2m, n3p, n3m, n4p, n4m, n5p, n5m, n6p, n6m, n7p,
       n7m, n8p, n8m, n9p, n9m;
 
@@ -67,19 +68,30 @@ void lb_calc_m_from_n_old(const std::array<double, 19> &populations,
   mode[16] = n0 + n4p + n5p + n6p + n7p + n8p + n9p - 2. * (n1p + n2p + n3p);
   mode[17] = -n1p + n2p + n6p + n7p - n8p - n9p;
   mode[18] = -n1p - n2p - n6p - n7p - n8p - n9p + 2. * (n3p + n4p + n5p);
+  return mode;
 }
 
 static void BM_LB_Modes_Calculation_Old(benchmark::State &state) {
   for (auto _ : state) {
     state.PauseTiming();
     std::array<double, 19> n;
-    std::array<double, 19> m;
     std::generate(n.begin(), n.end(), []() { return dist(mt); });
     state.ResumeTiming();
-    lb_calc_m_from_n_old(n, m.data());
+    benchmark::DoNotOptimize(lb_calc_m_from_n_old(n));
+  }
+}
+
+static void BM_LB_Modes_Calculation_template(benchmark::State &state) {
+  for (auto _ : state) {
+    state.PauseTiming();
+    std::array<double, 19> n;
+    std::generate(n.begin(), n.end(), []() { return dist(mt); });
+    state.ResumeTiming();
+    benchmark::DoNotOptimize(LB::lb_calc_m_from_n_template(n));
   }
 }
 
 BENCHMARK(BM_LB_Modes_Calculation_Old);
 BENCHMARK(BM_LB_Modes_Calculation_New);
+BENCHMARK(BM_LB_Modes_Calculation_template);
 BENCHMARK_MAIN();
