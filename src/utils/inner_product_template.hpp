@@ -6,6 +6,8 @@
 
 namespace Utils {
 
+namespace detail {
+
 template <int c, typename T> constexpr T mul(T ai) {
   return (c == 1) ? ai : c * ai;
 }
@@ -34,11 +36,13 @@ constexpr T inner_product_helper(const std::array<T, N> &n,
   return inner_product_template_impl<0, T, N, vec[index][I]...>{}(n);
 }
 
+} // namespace detail
+
 template <typename T, std::size_t N,
           const std::array<std::array<int, N>, N> &vec, std::size_t index,
           typename Indices = std::make_index_sequence<N>>
 constexpr T inner_product_template(const std::array<T, N> &n) {
-  return inner_product_helper<T, N, vec, index>(n, Indices{});
+  return detail::inner_product_helper<T, N, vec, index>(n, Indices{});
 }
 
 } // namespace Utils
