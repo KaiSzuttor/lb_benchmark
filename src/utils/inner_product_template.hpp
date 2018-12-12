@@ -6,7 +6,7 @@
 
 namespace Utils {
 
-template <int c> constexpr double mul(double ai) {
+template <int c, typename T> constexpr T mul(T ai) {
   return (c == 1) ? ai : c * ai;
 }
 
