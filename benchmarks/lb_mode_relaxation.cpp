@@ -7,27 +7,27 @@
 std::mt19937 mt(10);
 std::uniform_real_distribution<double> dist(1.0, 10.0);
 
-
-static void BM_LB_Modes_Calculation_Old(benchmark::State &state) {
+static void BM_LB_Mode_Relaxation_Old(benchmark::State &state) {
   for (auto _ : state) {
     state.PauseTiming();
     std::array<double, 19> n;
     std::generate(n.begin(), n.end(), []() { return dist(mt); });
     state.ResumeTiming();
-    benchmark::DoNotOptimize(LB_OLD::lb_calc_m_from_n(n));
+    LB_OLD::lb_relax_modes(n.data());
+    benchmark::DoNotOptimize(n);
   }
 }
 
-static void BM_LB_Modes_Calculation_New(benchmark::State &state) {
+static void BM_LB_Mode_Relaxation_New(benchmark::State &state) {
   for (auto _ : state) {
     state.PauseTiming();
     std::array<double, 19> n;
     std::generate(n.begin(), n.end(), []() { return dist(mt); });
     state.ResumeTiming();
-    benchmark::DoNotOptimize(LB::lb_calc_m_from_n(n));
+    benchmark::DoNotOptimize(LB::lb_relax_modes(n));
   }
 }
 
-BENCHMARK(BM_LB_Modes_Calculation_Old);
-BENCHMARK(BM_LB_Modes_Calculation_New);
+BENCHMARK(BM_LB_Mode_Relaxation_Old);
+BENCHMARK(BM_LB_Mode_Relaxation_New);
 BENCHMARK_MAIN();

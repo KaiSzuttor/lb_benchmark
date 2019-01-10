@@ -7,3 +7,4 @@ function(BENCHMARK)
 endfunction(BENCHMARK)
 
 BENCHMARK(NAME lb_mode_calculation SRC lb_mode_transformation.cpp)
+BENCHMARK(NAME lb_mode_relaxation SRC lb_mode_relaxation.cpp)
