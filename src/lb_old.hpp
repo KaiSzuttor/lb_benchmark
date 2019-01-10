@@ -188,6 +188,44 @@ inline void lb_relax_modes(double* mode) {
   mode[18] = lbpar.gamma_even * mode[18];
 }
 
+inline void lb_apply_forces(double *mode) {
+
+  double rho, *f, u[3], C[6];
+
+  f = force_density.data();
+
+  rho = mode[0] + lbpar.rho * lbpar.agrid * lbpar.agrid * lbpar.agrid;
+
+  /* hydrodynamic momentum density is redefined when external forces present */
+  u[0] = (mode[1] + 0.5 * f[0]) / rho;
+  u[1] = (mode[2] + 0.5 * f[1]) / rho;
+  u[2] = (mode[3] + 0.5 * f[2]) / rho;
+
+  C[0] = (1. + lbpar.gamma_bulk) * u[0] * f[0] +
+         1. / 3. * (lbpar.gamma_bulk - lbpar.gamma_shear) * Utils::scalar(u, f);
+  C[2] = (1. + lbpar.gamma_bulk) * u[1] * f[1] +
+         1. / 3. * (lbpar.gamma_bulk - lbpar.gamma_shear) * Utils::scalar(u, f);
+  C[5] = (1. + lbpar.gamma_bulk) * u[2] * f[2] +
+         1. / 3. * (lbpar.gamma_bulk - lbpar.gamma_shear) * Utils::scalar(u, f);
+  C[1] = 1. / 2. * (1. + lbpar.gamma_shear) * (u[0] * f[1] + u[1] * f[0]);
+  C[3] = 1. / 2. * (1. + lbpar.gamma_shear) * (u[0] * f[2] + u[2] * f[0]);
+  C[4] = 1. / 2. * (1. + lbpar.gamma_shear) * (u[1] * f[2] + u[2] * f[1]);
+
+  /* update momentum modes */
+  mode[1] += f[0];
+  mode[2] += f[1];
+  mode[3] += f[2];
+
+  /* update stress modes */
+  mode[4] += C[0] + C[2] + C[5];
+  mode[5] += C[0] - C[2];
+  mode[6] += C[0] + C[2] - 2. * C[5];
+  mode[7] += C[1];
+  mode[8] += C[3];
+  mode[9] += C[4];
+}
+
+
 }
 
 #endif

@@ -157,6 +157,44 @@ lb_relax_modes(const std::array<T, 19> &modes) {
   return relaxed_modes;
 }
 
+template <typename T>
+std::array<T, 19> lb_apply_forces(const std::array<T, 19> &modes) {
+  std::array<T, 19> modes_with_forces = modes;
+  T rho, u[3], C[6];
+
+  const auto &f = force_density;
+
+  rho = modes[0] + lbpar.rho;
+
+  /* hydrodynamic momentum density is redefined when external forces present */
+  u[0] = (modes[1] + 0.5 * f[0]) / rho;
+  u[1] = (modes[2] + 0.5 * f[1]) / rho;
+  u[2] = (modes[3] + 0.5 * f[2]) / rho;
+
+  C[0] = (1. + lbpar.gamma_bulk) * u[0] * f[0] +
+         1. / 3. * (lbpar.gamma_bulk - lbpar.gamma_shear) * Utils::scalar(u, f);
+  C[2] = (1. + lbpar.gamma_bulk) * u[1] * f[1] +
+         1. / 3. * (lbpar.gamma_bulk - lbpar.gamma_shear) * Utils::scalar(u, f);
+  C[5] = (1. + lbpar.gamma_bulk) * u[2] * f[2] +
+         1. / 3. * (lbpar.gamma_bulk - lbpar.gamma_shear) * Utils::scalar(u, f);
+  C[1] = 1. / 2. * (1. + lbpar.gamma_shear) * (u[0] * f[1] + u[1] * f[0]);
+  C[3] = 1. / 2. * (1. + lbpar.gamma_shear) * (u[0] * f[2] + u[2] * f[0]);
+  C[4] = 1. / 2. * (1. + lbpar.gamma_shear) * (u[1] * f[2] + u[2] * f[1]);
+
+  /* update momentum modes */
+  modes_with_forces[1] += f[0];
+  modes_with_forces[2] += f[1];
+  modes_with_forces[3] += f[2];
+
+  /* update stress modes */
+  modes_with_forces[4] += C[0] + C[2] + C[5];
+  modes_with_forces[5] += C[0] - C[2];
+  modes_with_forces[6] += C[0] + C[2] - 2. * C[5];
+  modes_with_forces[7] += C[1];
+  modes_with_forces[8] += C[3];
+  modes_with_forces[9] += C[4];
+  return modes_with_forces;
+}
 
 
 } // namespace LB
