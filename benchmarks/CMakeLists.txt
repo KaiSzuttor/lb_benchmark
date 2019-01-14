@@ -6,6 +6,6 @@ function(BENCHMARK)
   target_include_directories(${BENCHMARK_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/libs/benchmark/include ${CMAKE_SOURCE_DIR}/src)
 endfunction(BENCHMARK)
 
-BENCHMARK(NAME lb_mode_calculation SRC lb_mode_transformation.cpp)
+BENCHMARK(NAME lb_mode_transformation SRC lb_mode_transformation.cpp)
 BENCHMARK(NAME lb_mode_relaxation SRC lb_mode_relaxation.cpp)
 BENCHMARK(NAME lb_mode_apply_forces SRC lb_mode_apply_forces.cpp)

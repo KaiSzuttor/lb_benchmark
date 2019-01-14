@@ -196,7 +196,6 @@ std::array<T, 19> lb_apply_forces(const std::array<T, 19> &modes) {
   return modes_with_forces;
 }
 
-
 } // namespace LB
 
 #endif

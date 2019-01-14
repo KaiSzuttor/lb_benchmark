@@ -226,6 +226,7 @@ inline void lb_apply_forces(double *mode) {
 }
 
 
+
 }
 
 #endif
