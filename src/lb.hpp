@@ -5,6 +5,7 @@
 #include "utils/scalar.hpp"
 #include "utils/sqr.hpp"
 #include "utils/matrix_vector_product.hpp"
+#include "utils/Span.hpp"
 
 namespace LB {
 
@@ -109,6 +110,16 @@ template <typename T, std::size_t N>
 std::array<T, N> lb_calc_m_from_n(const std::array<T, N> n) {
   return Utils::matrix_vector_product<T, N, ::D3Q19::e_ki>(n);
 }
+
+/** Calculation of hydrodynamic modes */
+std::array<double, 19> lb_calc_modes(std::array<Utils::Span<double>, 19> lbfluid, std::size_t index) {
+  std::array<double, 19> n;
+  for (int i = 0; i < 19; i++) {
+    n[i] = lbfluid[i][index];
+  }
+  return lb_calc_m_from_n(n);
+}
+
 
 std::vector<double> force_density{{0.1, 0.2, 0.3}};
 
