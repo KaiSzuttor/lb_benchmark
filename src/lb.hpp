@@ -88,7 +88,7 @@ LB_Parameters lbpar = {
 
 
 template <typename T>
-std::array<T, 19> normalize_modes(const std::array<T, 19> &modes) {
+inline std::array<T, 19> normalize_modes(const std::array<T, 19> &modes) {
   auto normalized_modes = modes;
   for (int i = 0; i < modes.size(); i++) {
     normalized_modes[i] /= ::D3Q19::w_k[i];
@@ -97,7 +97,7 @@ std::array<T, 19> normalize_modes(const std::array<T, 19> &modes) {
 }
 
 template <typename T, std::size_t N>
-std::array<T, N> lb_calc_n_from_m(const std::array<T, N> &modes) {
+inline std::array<T, N> lb_calc_n_from_m(const std::array<T, N> &modes) {
   auto const normalized_modes = normalize_modes(modes);
   auto ret = Utils::matrix_vector_product<T, N, ::D3Q19::e_ki_transposed>(
       normalized_modes);
@@ -107,12 +107,12 @@ std::array<T, N> lb_calc_n_from_m(const std::array<T, N> &modes) {
 }
 
 template <typename T, std::size_t N>
-std::array<T, N> lb_calc_m_from_n(const std::array<T, N> n) {
+inline std::array<T, N> lb_calc_m_from_n(const std::array<T, N>& n) {
   return Utils::matrix_vector_product<T, N, ::D3Q19::e_ki>(n);
 }
 
 /** Calculation of hydrodynamic modes */
-std::array<double, 19> lb_calc_modes(std::array<Utils::Span<double>, 19> lbfluid, std::size_t index) {
+inline std::array<double, 19> lb_calc_modes(std::array<Utils::Span<double>, 19>& lbfluid, std::size_t index) {
   std::array<double, 19> n;
   for (int i = 0; i < 19; i++) {
     n[i] = lbfluid[i][index];
